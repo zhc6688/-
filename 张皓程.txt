@@ -1,0 +1,84 @@
+第一题
+def merge_dict(source_dict, update_dict) -> dict:
+    # print(source_dict,update_dict)
+    result = {}
+    for j, v in source_dict.items():
+        for i, k in update_dict.items():
+            # 先将获取的键值加入到空字典中
+            # 判断key相同直接覆盖，将最后一个value加入到字典中
+            if isinstance(v, dict) :
+                if isinstance(k, dict):
+                    results = {}
+                    for z, x in v.items():
+                        for a, s in k.items():
+                            if z == a:
+                                results[z] = s
+                                result[j] = results
+                                continue
+                            else:
+                                results[z] = x
+                                result[j] = results
+                                # result[j][z] = x
+                                continue
+            else:
+                if j == i:
+                    result[j] = k
+                    break
+                else:
+                    # 不相同则加入字典
+                    result[j] = v
+                    break
+
+    return result
+# 例子：
+source_dict = {
+    'key0': 'a',
+    'key1': 'b',
+    'key2': {
+        'inner_key0': 'c',
+        'inner_key1': 'd'
+    }
+}
+update_dict = {
+    'key1': 'x',
+    'key2': {
+        'inner_key0': 'y'
+    }
+}
+result = merge_dict(source_dict, update_dict)
+print(result)
+答案：{'key0': 'a', 'key1': 'x', 'key2': {'inner_key0': 'y', 'inner_key1': 'd'}}
+
+
+'电话号码题'
+def con(num):
+    if not num:
+        return []
+    myDict = {'2':'abc','3':'def','4':'ghi','5':'jkl','6':'mno','7':'pqrs','8':'tuv','9':'wxyz'}
+    list = []
+    if len(num) == 0:
+        return []
+    if len(num) == 1:
+        return myDict[num]
+    res = con(num[1:])
+    for i in res:
+        for j in myDict[num[0]]:
+            list.append(j+i)
+    return list
+print(con('63'))
+
+
+
+#内存泄露
+#说到内存就得提到python的垃圾回收机制（引用计数、标记清楚、分带回收）
+垃圾回收机制具体的就不在这里说了 我说一下泄露的原因
+
+#泄露的原因
+# python开发的底层模块中出现了内存泄露
+# 代码中用到了全局的 list、 dict 或其它容器，不停的往这些容器中插入对象，而忘记了在使用完之后进行删除回收
+# 代码中有“引用循环”，并且被循环引用的对象定义了__del__方法，就会发生内存泄露
+
+#1、对象被另一个生命周期特别长的对象所引用。
+# 解决方式：只要在适当的时机解除引用。
+# 2、是循环引用中的对象定义了__del__函数，如果定义了__del__函数，那么Python中的解析器就不能判断解析对象，所以不会做处理
+# 解决方法：要么不再使用__del__函数，换一种实现方式，要么解决循环引用。
